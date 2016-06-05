@@ -1,0 +1,207 @@
+	<!-- Navigation -->
+	<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+		<div class="container">
+			<!-- Brand and toggle get grouped for better mobile display -->
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+					<span class="sr-only">Toggle navigation</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" href="http://www.bownhs.org/helpdesk/">Helpdesk Home</a>
+			</div>
+			<?php
+				ob_start();
+				include 'live.php';
+				$live = ob_get_clean();
+				session_start();
+				$account = false;
+				if (isset($_SESSION['token']) && strlen($_SESSION['token']) === 10) {
+					require_once('dbconfig.php');
+					try {
+						$dbh = new PDO($driver, $user, $pass, $attr);
+						$stmt = $dbh->prepare('SELECT * FROM `users` WHERE `token` = :token');
+						$stmt->bindParam(':token', $_SESSION['token'], PDO::PARAM_STR);
+						$stmt->execute();
+						while ($row = $stmt->fetch()) {
+							$account = $row;
+							break;
+						}
+						unset($stmt);
+						unset($dbh);
+					} catch (Exception $e) {
+						$recipient = "dwheelerw@gmail.com";
+						$subject = "ERROR - SQL Connection";
+						$mail_body = "An exception occurred on the helpdesk home page: " . $e->getMessage();
+						mail($recipient, $subject, $mail_body);
+						die('Feature currently unavailable.');
+					}
+				}
+			?>
+			<!-- Collect the nav links, forms, and other content for toggling -->
+			<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+				<ul class="nav navbar-nav">
+					<li>
+						<a href="http://bhs.bownet.org/about">About</a>
+					</li>
+					<li>
+						<a href="http://bhs.bownet.org/students">Students</a>
+					</li>
+					<li>
+						<a<?php echo ($live == '0' ? '' : ' href="chat.php"'); ?>><span>Live Support <img src="http://www.bownhs.org/helpdesk/img/<?php echo ($live == '0' ? 'off' : 'on'); ?>line.png" /></span></a>
+					</li>
+				</ul>
+				<ul class="nav navbar-nav navbar-right">
+					<li>
+						<?php
+							if ($account == false) {
+						echo '<a href="login.php">Sign in</a>';
+							} else {
+						echo '<a href="">' . $account['name'] . '</a>';
+							}
+						?>
+					</li>
+				</ul>
+			</div>
+			<!-- /.navbar-collapse -->
+		</div>
+		<!-- /.container -->
+	</nav>
+
+	<!-- Page Content -->
+	<div class="container">
+
+		<div class="row">
+
+			<!-- Blog Entries Column -->
+			<div class="col-md-8">
+
+				<?php echo $page_innards; ?>
+
+			</div>
+
+			<!-- Blog Sidebar Widgets Column -->
+			<div class="col-md-4">
+
+				<!-- Blog Search Well -->
+				<div class="well">
+					<h4>Helpdesk Search</h4>
+					<div class="input-group">
+						<input type="text" class="form-control">
+						<span class="input-group-btn">
+							<button class="btn btn-default" type="button">
+								<span class="glyphicon glyphicon-search"></span>
+						</button>
+						</span>
+					</div>
+					<!-- /.input-group -->
+				</div>
+
+				<?php
+					$tags = $tag_names = array();
+					require_once('dbconfig.php');
+					try {
+						$dbh = new PDO($driver, $user, $pass, $attr);
+						try {
+							$stmt = $dbh->prepare('SELECT `tags` FROM `articles`');
+							$stmt->execute();
+							while ($row = $stmt->fetch()) {
+								$post = explode(' ', $row['tags']);
+								foreach ($post as $tag) {
+									if ($tag == '') continue;
+									$tags[$tag] += 1;
+								}
+							}
+							arsort($tags);
+							$count = 0;
+							foreach ($tags as $key => $value) {
+								$tag_names[$count++] = $key . ' (' . $value . ')';
+							}
+							unset($stmt);
+							unset($dbh);
+						} catch (Exception $f) {
+							echo "Exception: " . $f->getMessage() . "<br />";
+						}
+					} catch (Exception $e) {
+						$recipient = "dwheelerw@gmail.com";
+						$subject = "ERROR - SQL Connection";
+						$mail_body = "An exception occurred on the helpdesk homepage: " . $e->getMessage();
+						mail($recipient, $subject, $mail_body);
+					}
+				?>
+
+				<!-- Blog Tags Well -->
+				<div class="well">
+					<h4>Most Popular Tags</h4>
+					<div class="row">
+						<div class="col-lg-6">
+							<ul class="list-unstyled">
+								<?php
+									for ($i = 0; $i < 10; $i += 2) {
+										echo '<li><a href="http://www.bownhs.org/helpdesk/tags/' . substr($tag_names[$i], 0, strpos($tag_names[$i], ' (')) . '">' . $tag_names[$i] . '</a></li>';
+									}
+								?>
+							</ul>
+						</div>
+						<!-- /.col-lg-6 -->
+						<div class="col-lg-6">
+							<ul class="list-unstyled">
+								<?php
+									for ($i = 1; $i < 10; $i += 2) {
+										echo '<li><a href="http://www.bownhs.org/helpdesk/tags/' . substr($tag_names[$i], 0, strpos($tag_names[$i], ' (')) . '">' . $tag_names[$i] . '</a></li>';
+									}
+								?>
+							</ul>
+						</div>
+						<!-- /.col-lg-6 -->
+					</div>
+					<!-- /.row -->
+				</div>
+
+				<!-- Resources Well -->
+				<div class="well">
+					<h4>Resources</h4>
+					<div class="row">
+						<div class="col-lg-12">
+							<ul class="list-unstyled">
+								<li>
+									<a href="http://bownet.libguides.com/hello" target="_blank"><i class="fa fa-book fa-fw"></i> Bow High School Media Center</a>
+								</li>
+								<li>
+									<a href="mailto:sdixon@bownet.org" target="_blank"><i class="fa fa-envelope fa-fw"></i> Contact Media Center Staff</a>
+								</li>
+								<li>
+									<a href="http://search.ebscohost.com/login.aspx?authtype=uid&profile=eds&user=bowhigh&password=03304" target="_blank"><i class="glyphicon glyphicon-globe glyphicon-fw"></i> EBSCO Discovery Service</a>
+								</li>
+								<li>
+									<a href="<?php switch (rand(0, 1)) { case 0: echo "mailto:rjaques@bownet.org"; break; case 1: echo "mailto:lhernandez@bownet.org"; break; } ?>" target="_blank"><i class="fa fa-question-circle fa-fw"></i> Ask IT a question directly</a>
+								</li>
+							</ul>
+						</div>
+						<!-- /.col-lg-12 -->
+					</div>
+					<!-- /.row -->
+				</div>
+
+			</div>
+
+		</div>
+		<!-- /.row -->
+
+		<hr>
+
+		<!-- Footer -->
+		<footer>
+			<div class="row">
+				<div class="col-lg-12">
+					<p>Copyright &copy; Bow High School 2015</p>
+				</div>
+				<!-- /.col-lg-12 -->
+			</div>
+			<!-- /.row -->
+		</footer>
+
+	</div>
+	<!-- /.container -->
+	
