@@ -17,7 +17,7 @@ try {
 		echo "Exception: " . $f->getMessage() . "<br />";
 	}
 } catch (Exception $e) {
-	$recipient = "dwheelerw@gmail.com";
+	$recipient = ""; //provide an email address here to send error reports to
 	$subject = "ERROR - SQL Connection";
 	$mail_body = "An exception occurred on the helpdesk post page: " . $e->getMessage();
 	mail($recipient, $subject, $mail_body);

@@ -32,7 +32,7 @@ try {
 	if ($candidate === false) echo 0;
 	else echo $candidate['name'] . "\n" . $candidate['phone'];
 } catch (Exception $e) {
-	$recipient = "dwheelerw@gmail.com";
+	$recipient = ""; //provide an email address here to send error reports to
 	$subject = "ERROR - SQL Connection";
 	$mail_body = "An exception occurred on the helpdesk live page: " . $e->getMessage();
 	mail($recipient, $subject, $mail_body);

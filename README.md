@@ -30,11 +30,13 @@ To-Do List
 
 Implementation
 --------------
-Making this source work is fairly straightforward. You must copy all files into the **base** directory of your site (otherwise `htaccess` will not work).
+Making this project work is fairly straightforward. You must first copy all project files into the **base** directory of your site (otherwise `htaccess` will not work properly).
 
-Next, set up an SQL database and put all credentials inside of `dbconfig.php` to ensure proper connection to data.
+Next, locate the places in the source where `try` blocks have been implemented and specify an email to send error reports to. This will help you stay on top of bugs as soon as they happen!
 
-Finally, set up SQL database with the following tables:
+Then, set up an SQL database and put all database credentials inside of `dbconfig.php` to ensure proper connection to data. Note that this file should be kept especially safe.
+
+Finally, set up SQL database with the following commands:
 
 ```SQL
 CREATE TABLE IF NOT EXISTS `articles` (
@@ -65,10 +67,10 @@ CREATE TABLE IF NOT EXISTS `users` (
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 ```
 
-After you've followed these steps everything should work properly! The following are a few notes on the SQL tables.
+After you've followed these steps everything should be set up properly! The following are a few notes on understanding the less straightforward elements of the database.
 
 `articles`: `id` is an arbitrary string of 10 letters, `picture` is simply the URL of the image to display at the top of the article, `contents` can be any HTML formatted text, and `tags` should be a list of different keywords separated by spaces.
 
-`live_support`: `phone` should be an email address associated with the phone (for example, a Verizon phone with number (555) 555-1234 would be formatted as 5555551234@vtext.com), `schedule` is how often the times repeat (day indicates daily, and a specific week day indicates repeating that day every week), `time_lower` is the time at which the person is first available formatted in military time as one number (for example, 2:30 PM becomes 1430), and `time_upper` is the time at which the person is no longer available formatted the same way as `time_lower`.
+`live_support`: `phone` should be an email address associated with the phone to text (for example, a Verizon phone with number (555) 555-1234 would be formatted as 5555551234@vtext.com), `schedule` is how often the times repeat (day indicates daily, and a specific week day indicates repeating that day every week), `time_lower` is the time at which the person is first available formatted in military time as one number (for example, 2:30 PM becomes 1430), and `time_upper` is the time at which the person is no longer available formatted the same way as `time_lower`.
 
-`users`: `token` is a random string assigned by the server when the user attempts to log in. This verifies their session and makes it impossible for anyone else to jump in on the session.
+`users`: `token` is a random string assigned by the server when the user attempts to log in. This verifies their session and makes it impossible for anyone else to hijack the session.
