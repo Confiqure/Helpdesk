@@ -1,7 +1,9 @@
 Helpdesk
 ========
 
-Helpdesk is a project created to be used as a collaborative tool where students and teachers post articles and anyone can view them. The primary purpose of this application is to provide technical assistance to those in need. When someone encounters a problem, they can pull up the forum and search for it either by text or by tags in the appropriate category. Basic framework exists for this application, but there is much to be added.
+Helpdesk is a project created to be used as a collaborative tool where students and teachers post articles that anyone can view and benefit from. The primary purpose of this application is to provide technical assistance to those in need. When someone encounters a problem, they can pull up the forum and search for it either by text or by searching from tags in the appropriate category. Basic framework exists for this application, but there is much to be added.
+
+This project began as an idea our school's media specialist had about bringing tech support right to the hands of each and every person in our school without having to schedule an appointment with our IT department. I created this framework for my Senior Project but unfortunately was not able to see the project through to the end due to time constraints. Much has been done here, but *much* more can be done to improve the overall functionality and usefulness of this application.
 
 Features
 --------
@@ -67,7 +69,16 @@ CREATE TABLE IF NOT EXISTS `users` (
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 ```
 
-After you've followed these steps everything should be set up properly! The following are a few notes on understanding the less straightforward elements of the database.
+After you've followed these steps everything should be set up properly! The following section contains a few notes about understanding the less straightforward elements about the project.
+
+Notes
+-----
+
+### Website
+
+A large amount of code is renewed from page to page. This is why the `body.html` file exists. This file provides the basic skeleton of the website, where the individual pages control the meat of the page. The `body.html` file is never reached on its own, rather its code is reused from file to file.
+
+### SQL
 
 `articles`: `id` is an arbitrary string of 10 letters, `picture` is simply the URL of the image to display at the top of the article, `contents` can be any HTML formatted text, and `tags` should be a list of different keywords separated by spaces.
 
